@@ -1,68 +1,47 @@
-import { DataTypes, Sequelize } from "sequelize";
-import sequelize from "../database/db.connect.js";
-import modelOptions from "./model.options.js";
+import mongoose, { Schema } from "mongoose";
 
-const favoriteModel = sequelize.define(
-  "Favorite",
+const favoriteSchema = new Schema(
   {
-    favoriteId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "User",
-        key: "userId",
-      },
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
+
     content: {
-      type: DataTypes.STRING,
-      // allowNull: false,
+      type: String,
+      default: "",
     },
+
     mediaType: {
-      // type: DataTypes.ENUM("tv", "movie"),
-      // allowNull: false,
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isIn: [["tv", "movie"]], // Xác thực giá trị hợp lệ
-      },
+      type: String,
+      enum: ["tv", "movie"],
+      required: true,
     },
+
     mediaId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: Number,
+      required: true,
     },
+
     mediaTitle: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
+
     mediaPoster: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
+
     mediaRate: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE, // Sử dụng kiểu DATE
-      allowNull: false,
-      defaultValue: Sequelize.literal("GETDATE()"),
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal("GETDATE()"),
+      type: Number,
+      required: true,
     },
   },
   {
-    ...modelOptions,
-    tableName: "Favorites", // Tên bảng trong SQL Server
-    timestamps: true, // Đảm bảo `createdAt` và `updatedAt` hoạt động
+    timestamps: true,
   }
 );
 
-export default favoriteModel;
+export const FavoriteModel = mongoose.model("Favorite", favoriteSchema);

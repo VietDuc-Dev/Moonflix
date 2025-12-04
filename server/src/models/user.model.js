@@ -1,50 +1,38 @@
-import { DataTypes, Sequelize } from "sequelize";
-import sequelize from "../database/db.connect.js";
-import modelOptions from "./model.options.js";
+import mongoose, { Schema } from "mongoose";
+// import modelOptions from "./model.options";
 
-const userModel = sequelize.define(
-  "User",
+const userSchema = new Schema(
   {
-    userId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     username: {
-      type: DataTypes.STRING,
+      type: String,
+      trim: true,
     },
+
     email: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
       unique: true,
-      validate: {
-        isEmail: true,
-      },
+      lowercase: true,
+      trim: true,
+      match: [/.+@.+\..+/, "Invalid email format"],
     },
+
     password: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
+
     salt: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE, // Sử dụng kiểu DATE
-      allowNull: false,
-      defaultValue: Sequelize.literal("GETDATE()"),
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal("GETDATE()"),
+      type: String,
+      required: true,
     },
   },
   {
-    ...modelOptions, // Kế thừa từ modelOptions
-    tableName: "Users", // Tên bảng trong SQL Server
-    timestamps: true, // Đảm bảo `createdAt` và `updatedAt` hoạt động
+    // ...modelOptions,
   }
 );
 
-export default userModel;
+// Index for faster login queries
+userSchema.index({ email: 1 }, { unique: true });
+
+export const UserModel = mongoose.model("User", userSchema);
