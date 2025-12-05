@@ -1,4 +1,4 @@
-# 🌟 MERN NETFLIX App
+# 🌟 MERN Moonflix App
 
 ---
 
